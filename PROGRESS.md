@@ -15,8 +15,8 @@
 | | |
 |---|---|
 | **Last updated** | 2026-08-26 |
-| **Phase** | Wave 0 — bootstrap |
-| **Current ticket** | T-001 · Repository bootstrap and documentation |
+| **Phase** | Wave 0 complete — Wave 1 ready to start |
+| **Next ticket** | T-002 · Web application scaffold (T-003, T-005, T-301 can run in parallel) |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -37,6 +37,7 @@ Verified on this machine (Windows 11, Git Bash):
 | gh | 2.96.0 | authenticated as `ThePawn8` |
 | uv | not installed | needed for T-003 → `pip install uv` |
 | Docker | not installed | needed for local Mongo (T-005) → Docker Desktop |
+| make | not installed | use the npm equivalents (`npm run check`, `npm run dev`, …) |
 
 ```bash
 make db-up     # MongoDB via docker compose
@@ -79,7 +80,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 ### Wave 0 — bootstrap
 | ID | Ticket | Status | PR | Notes |
 |---|---|---|---|---|
-| T-001 | Repository bootstrap and documentation | 🟨 | — | In progress this session |
+| T-001 | Repository bootstrap and documentation | ✅ | [#1](https://github.com/ThePawn8/personal-portfolio/pull/1) | Repo created, `main` protected, squash-only merges |
 
 ### Wave 1 — scaffolds (parallel)
 | ID | Ticket | Status | PR | Notes |
@@ -194,6 +195,10 @@ Newest first. One entry per working session: what shipped, what was learned, wha
 ### 2026-08-26 — Session 1 · project kickoff
 
 **Shipped**
+- GitHub repository created: `ThePawn8/personal-portfolio`, public, `main` protected
+  (pull request required, linear history, no force pushes, squash-only merges, branches
+  deleted on merge)
+- **T-001 merged** as [PR #1](https://github.com/ThePawn8/personal-portfolio/pull/1)
 - Architecture decisions taken with the author across three rounds of questions
 - `docs/ARCHITECTURE.md` — full technical design, 14 sections with C4 and data-flow diagrams
 - `docs/adr/0001..0006` — six architecture decision records
