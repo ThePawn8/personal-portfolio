@@ -1,0 +1,26 @@
+{
+  "name": "personal-portfolio",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Personal portfolio — Vue 3 SPA + FastAPI/MongoDB. Task runner for both applications.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "install:all": "npm --prefix apps/web ci && npm run api -- sync --all-extras",
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:api": "npm run api -- run uvicorn portfolio_api.main:app --reload --port 8000",
+    "check": "npm run check:web && npm run check:api",
+    "check:web": "npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test",
+    "check:api": "npm run api -- run ruff check . && npm run api -- run ruff format --check . && npm run api -- run mypy src && npm run api -- run pytest",
+    "test": "npm --prefix apps/web run test:coverage && npm run api -- run pytest --cov",
+    "e2e": "npm --prefix apps/web run e2e",
+    "seed": "npm run api -- run python -m portfolio_api.seed",
+    "seed:check": "npm run api -- run python -m portfolio_api.seed --check",
+    "db:up": "docker compose -f infra/docker-compose.yml up -d",
+    "db:down": "docker compose -f infra/docker-compose.yml down",
+    "api": "node scripts/uv.mjs"
+  }
+}
