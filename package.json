@@ -14,7 +14,7 @@
     "dev:web": "npm --prefix apps/web run dev",
     "dev:api": "npm run api -- run uvicorn portfolio_api.main:app --reload --port 8000",
     "check": "npm run check:web && npm run check:api",
-    "check:web": "npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run test",
+    "check:web": "npm --prefix apps/web run lint && npm --prefix apps/web run typecheck && npm --prefix apps/web run check:contrast && npm --prefix apps/web run test",
     "check:api": "npm run api -- run ruff check . && npm run api -- run ruff format --check . && npm run api -- run mypy src tests && npm run api -- run pytest",
     "test": "npm --prefix apps/web run test:coverage && npm run api -- run pytest --cov",
     "e2e": "npm --prefix apps/web run e2e",

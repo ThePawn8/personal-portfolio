@@ -28,7 +28,7 @@ dev-api: ## Run the API only
 check: check-web check-api ## Lint, typecheck and unit-test both applications
 
 check-web: ## Quality gates for the web app
-	cd $(WEB) && npm run lint && npm run typecheck && npm run test
+	cd $(WEB) && npm run lint && npm run typecheck && npm run check:contrast && npm run test
 
 check-api: ## Quality gates for the API
 	cd $(API) && uv run ruff check . && uv run ruff format --check . && uv run mypy src tests && uv run pytest

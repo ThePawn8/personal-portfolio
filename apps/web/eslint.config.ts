@@ -27,6 +27,10 @@ export default defineConfigWithVueTs(
     rules: {
       // Multi-word component names add noise for view components named after routes.
       'vue/multi-word-component-names': 'off',
+      // Redundant under TypeScript, and actively wrong with `exactOptionalPropertyTypes`:
+      // an optional prop typed `string | undefined` must be *absent* from withDefaults, not
+      // defaulted to `undefined`. The type system already states the contract.
+      'vue/require-default-prop': 'off',
       // Prop order and attribute order keep large SFCs scannable.
       'vue/attributes-order': 'error',
       'vue/component-api-style': ['error', ['script-setup']],
@@ -51,10 +55,14 @@ export default defineConfigWithVueTs(
   },
 
   {
-    name: 'app/config-files',
-    files: ['*.config.ts', 'e2e/**/*.ts'],
+    name: 'app/node-scripts',
+    files: ['*.config.ts', 'e2e/**/*.ts', 'scripts/**/*.mjs'],
+    languageOptions: {
+      globals: { console: 'readonly', process: 'readonly' },
+    },
     rules: {
-      // Config and e2e files legitimately read process.env and log.
+      // Config, e2e and build scripts legitimately read process.env and print to stdout —
+      // for a CLI check, the console output *is* the interface.
       'no-console': 'off',
     },
   },

@@ -18,6 +18,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "check:contrast": "node scripts/check-contrast.mjs",
     "e2e": "playwright test",
     "e2e:install": "playwright install --with-deps chromium"
   },
