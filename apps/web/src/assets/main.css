@@ -1,0 +1,36 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens, the light/dark palettes and the type scale land in T-201.
+ * This file currently exists to prove the Tailwind v4 pipeline is wired up:
+ * utilities compile, the build purges, and dark mode resolves from a data attribute.
+ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    font-family:
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      sans-serif;
+  }
+
+  /* Respect a reader who asked for less motion, everywhere, by default. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

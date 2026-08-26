@@ -15,8 +15,8 @@
 | | |
 |---|---|
 | **Last updated** | 2026-08-26 |
-| **Phase** | Wave 0 complete — Wave 1 ready to start |
-| **Next ticket** | T-002 · Web application scaffold (T-003, T-005, T-301 can run in parallel) |
+| **Phase** | Wave 1 in progress |
+| **Next ticket** | T-003 · API scaffold (T-005, T-301 can run in parallel) |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -85,7 +85,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 ### Wave 1 — scaffolds (parallel)
 | ID | Ticket | Status | PR | Notes |
 |---|---|---|---|---|
-| T-002 | Web application scaffold and tooling | ⬜ | — | Vite scaffold + deps already installed locally, uncommitted |
+| T-002 | Web application scaffold and tooling | ✅ | [#3](https://github.com/ThePawn8/personal-portfolio/pull/3) | All gates green; baseline bundle 24.07 kB gzip JS, 2.51 kB gzip CSS |
 | T-003 | API application scaffold and tooling | ⬜ | — | Needs `pip install uv` first |
 | T-005 | Local development environment | ⬜ | — | Needs Docker Desktop |
 | T-301 | Content schema and authoring guide | ⬜ | — | No dependencies — good parallel starter |
@@ -188,9 +188,48 @@ were concurrent before publishing the timeline (T-302).
 
 ---
 
-## 7. Session log
+## 7. Baselines
+
+Recorded so a regression is visible rather than guessed at. Update when they move.
+
+| Metric | Value | Measured |
+|---|---|---|
+| Web bundle, initial route | 60.41 kB raw / **24.07 kB gzip** (budget 180 kB) | T-002, empty app |
+| Web CSS | 8.97 kB raw / **2.51 kB gzip** (budget 30 kB) | T-002, Tailwind base only |
+| Web unit coverage | 100 % statements | T-002 |
+| Production build time | ~0.4 s | T-002 |
+| E2E suite | 4 tests, 5.8 s, chromium + mobile | T-002 |
+
+---
+
+## 8. Session log
 
 Newest first. One entry per working session: what shipped, what was learned, what is next.
+
+### 2026-08-26 — Session 2 · Wave 1
+
+**Shipped**
+- **T-002 merged** — web scaffold with every quality gate green: `vue-tsc` strict build,
+  ESLint 10 flat config with type-checked rules, Prettier, Vitest (2 tests, 100 % coverage),
+  Playwright (4 tests on chromium + Pixel 7 viewport), production build
+
+**Learned / gotchas** (all cost real debugging time — do not rediscover them)
+- **TS 6 deprecates `baseUrl`.** Use `paths` alone; it resolves relative to the tsconfig file.
+- **`allowArbitraryExtensions` breaks CSS imports.** With it on, TypeScript looks for
+  `main.d.css.ts` instead of using the `*.css` wildcard declaration.
+- **TS 6 raises TS2882 for side-effect CSS imports** even with `vite/client` types loaded.
+  Fixed with an explicit `declare module '*.css'` in `src/vite-env.d.ts`.
+- **Type-checked ESLint requires every linted file to be in a tsconfig `include`** —
+  `eslint.config.ts` lints itself, so it must be listed in `tsconfig.node.json`.
+- **Rollup 4 rejects the object form of `manualChunks`** in Vite 8 typings. Chunking is
+  deferred to T-502, where it belongs anyway.
+- Playwright runs against `vite preview` of a real production build, not the dev server —
+  dev-only behaviour hides deployment bugs.
+
+**Next**
+- T-003 (API scaffold) → then T-005 and T-301, which are independent of it
+
+---
 
 ### 2026-08-26 — Session 1 · project kickoff
 
