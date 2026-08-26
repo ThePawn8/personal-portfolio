@@ -94,7 +94,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 | ID | Ticket | Status | PR | Notes |
 |---|---|---|---|---|
 | T-004 | CI pipeline | ⬜ | — | Needs the `workflow` token scope |
-| T-101 | Configuration, logging and error contract | ⬜ | — | |
+| T-101 | Configuration, logging and error contract | ✅ | [#7](https://github.com/ThePawn8/personal-portfolio/pull/7) | 29 tests, 100 % coverage; error reference at `docs/ERRORS.md` |
 | T-201 | Design system and tokens | ⬜ | — | Needs a visual direction decision |
 | T-302 | Profile content | ⬜ | — | Source data extracted from the CV, see § 6 |
 
@@ -225,8 +225,28 @@ Newest first. One entry per working session: what shipped, what was learned, wha
   profile, a template, a worked example, and guidance on writing case studies that name
   *your* contribution and handle NDA work without leaking internals
 
-**Wave 1 is complete.** Wave 2 is T-004 (CI), T-101 (config/logging/errors), T-201 (design
-system) and T-302 (profile content) — all four are independent of each other.
+- **T-101 merged** — settings that fail fast on a bad production config, structlog JSON
+  logging with ULID request correlation, and the full RFC 9457 error contract with a
+  published reference at [docs/ERRORS.md](./docs/ERRORS.md)
+
+**Wave 1 is complete.** Remaining in Wave 2: T-004 (CI, blocked), T-201 (design system) and
+T-302 (profile content).
+
+**T-101 gotchas**
+- `filterwarnings = ["error"]` earned its place immediately: `status.HTTP_422_UNPROCESSABLE_ENTITY`
+  is deprecated in Starlette 1.6, and the warning was raised *inside* the exception handler,
+  turning every 422 into a 500. Use `HTTP_422_UNPROCESSABLE_CONTENT`.
+- `structlog.testing.capture_logs()` replaces the **entire** processor chain, so any
+  processor under test (`merge_contextvars`, `add_request_id`) must be passed to it
+  explicitly — otherwise the assertion is about a pipeline that is not ours.
+- `cache_logger_on_first_use=True` breaks both `capture_logs` and any reconfiguration, and
+  `create_app` reconfigures logging on every call. Turned off.
+- Request context is raw ASGI middleware, not `BaseHTTPMiddleware`: no extra task per
+  request, no context copying, and no interference with streaming responses.
+- Ruff `N818` requires an `Error` suffix on exception names, so the domain exceptions are
+  `ProjectNotFoundError`, `RateLimitExceededError` and friends.
+- `tests/` is a package (`__init__.py`) so shared helpers import as `tests.conftest`;
+  without it mypy sees the same file under two module names and refuses to continue.
 
 **Learned / gotchas** (all cost real debugging time — do not rediscover them)
 - **TS 6 deprecates `baseUrl`.** Use `paths` alone; it resolves relative to the tsconfig file.
