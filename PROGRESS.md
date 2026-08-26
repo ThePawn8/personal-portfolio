@@ -16,7 +16,7 @@
 |---|---|
 | **Last updated** | 2026-08-26 |
 | **Phase** | Wave 1 in progress |
-| **Next ticket** | T-005 · Local dev environment, then T-301 · Content schema |
+| **Next ticket** | T-301 · Content schema and authoring guide |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -87,7 +87,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 |---|---|---|---|---|
 | T-002 | Web application scaffold and tooling | ✅ | [#3](https://github.com/ThePawn8/personal-portfolio/pull/3) | All gates green; baseline bundle 24.07 kB gzip JS, 2.51 kB gzip CSS |
 | T-003 | API application scaffold and tooling | ✅ | [#4](https://github.com/ThePawn8/personal-portfolio/pull/4) | ruff + mypy strict + pytest green, 100 % coverage |
-| T-005 | Local development environment | ⬜ | — | Needs Docker Desktop |
+| T-005 | Local development environment | ✅ | [#5](https://github.com/ThePawn8/personal-portfolio/pull/5) | ⚠️ Container start-up **not** verified — Docker is not installed here (see § 5, V1) |
 | T-301 | Content schema and authoring guide | ⬜ | — | No dependencies — good parallel starter |
 
 ### Wave 2
@@ -159,6 +159,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 | Q6 | Repository name and visibility | T-001 | ✅ `ThePawn8/personal-portfolio`, public |
 | Q7 | Visual direction | T-201 | ✅ Dark and light, both first-class, tokenised |
 | Q8 | Accounts to create: Fly.io, Vercel, Resend | T-402, T-403, T-106 | **Open** |
+| V1 | **Unverified:** `npm run db:up` has never been executed — Docker is not installed on this machine. The compose file and init script are syntax-checked only. Run it once Docker Desktop is installed, before T-102 depends on it | T-102 | **Open** |
 
 **Agreed way of working on content (Q1–Q3):** the author does not write the case studies from
 scratch. For each project, Claude asks a short set of questions (what was built, stack, role,
@@ -217,6 +218,9 @@ Newest first. One entry per working session: what shipped, what was learned, wha
 - **T-003 merged** — API scaffold: uv-locked dependencies, Ruff (16 rule families including
   bandit and async correctness), mypy strict, pytest with a coverage gate and
   `filterwarnings = error`, `/healthz` verified against a live uvicorn process
+- **T-005 merged** — local environment: MongoDB compose file with authentication, a
+  least-privilege app user matching production, loopback-only port binding, and an
+  idempotent `npm run setup` that creates `.env` and generates a random `IP_HASH_SALT`
 
 **Learned / gotchas** (all cost real debugging time — do not rediscover them)
 - **TS 6 deprecates `baseUrl`.** Use `paths` alone; it resolves relative to the tsconfig file.

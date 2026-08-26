@@ -1,11 +1,14 @@
 .DEFAULT_GOAL := help
-.PHONY: help install dev dev-web dev-api check check-web check-api test test-web test-api e2e seed seed-check db-up db-down db-logs clean
+.PHONY: help setup install dev dev-web dev-api check check-web check-api test test-web test-api e2e seed seed-check db-up db-down db-logs db-shell db-reset clean
 
 WEB := apps/web
 API := apps/api
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
+
+setup: ## Create .env and generate local secrets (idempotent)
+	node scripts/setup.mjs
 
 install: ## Install dependencies for both applications
 	cd $(WEB) && npm ci
@@ -55,6 +58,13 @@ db-down: ## Stop local MongoDB
 
 db-logs: ## Tail MongoDB logs
 	docker compose -f infra/docker-compose.yml logs -f mongo
+
+db-shell: ## Open a mongosh shell as the application user
+	docker exec -it portfolio-mongo mongosh -u portfolio -p local-dev-only --authenticationDatabase portfolio portfolio
+
+db-reset: ## Destroy the local database and recreate it from scratch
+	docker compose -f infra/docker-compose.yml down -v
+	docker compose -f infra/docker-compose.yml up -d
 
 clean: ## Remove build artefacts and caches
 	rm -rf $(WEB)/dist $(WEB)/coverage $(WEB)/playwright-report $(WEB)/test-results

@@ -1,0 +1,33 @@
+name: portfolio
+
+# Local development database only. Production MongoDB runs on Fly.io behind a private
+# network (ADR-0003); see infra/fly.mongo.toml once T-402 lands.
+services:
+  mongo:
+    image: mongo:7
+    container_name: portfolio-mongo
+    restart: unless-stopped
+    # Bound to loopback on purpose: a database on 0.0.0.0 is reachable from the local
+    # network, and a laptop on shared wifi is exactly where that goes wrong.
+    ports:
+      - '127.0.0.1:27017:27017'
+    environment:
+      # Local-only credentials. Never reused anywhere else; production secrets live in
+      # `fly secrets` and GitHub Actions secrets.
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: local-dev-only
+      MONGO_INITDB_DATABASE: portfolio
+    volumes:
+      - mongo-data:/data/db
+      # Init scripts run exactly once, when the data volume is empty.
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  mongo-data:
+    name: portfolio-mongo-data

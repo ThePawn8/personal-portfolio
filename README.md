@@ -56,15 +56,37 @@ and [uv](https://docs.astral.sh/uv/) (`pip install uv`).
 ```bash
 git clone https://github.com/ThePawn8/personal-portfolio.git
 cd personal-portfolio
-cp .env.example .env          # then fill in the values
 
-make install                  # install web and API dependencies
-make db-up                    # start MongoDB in Docker
-make seed                     # load content/ into MongoDB
-make dev                      # API on :8000, web on :5173
+npm run setup         # create .env and generate local secrets
+npm run install:all   # web and API dependencies
+npm run db:up         # MongoDB in Docker
+npm run seed          # load content/ into MongoDB
+npm run dev           # API on :8000, web on :5173
 ```
 
-Without Docker, point `MONGODB_URI` at any reachable MongoDB instance and skip `make db-up`.
+Open <http://localhost:5173> for the site and <http://localhost:8000/docs> for the API
+contract.
+
+The local database runs with authentication enabled and the API connects as a
+least-privilege user (`readWrite` on one database), matching production. Those credentials
+are local-only and deliberately committed; real secrets live in `fly secrets` and GitHub
+Actions secrets.
+
+### Without Docker
+
+Point `MONGODB_URI` in `.env` at any reachable MongoDB 7 instance — a local `mongod`
+installation or a free MongoDB Atlas cluster — and skip `npm run db:up`. Nothing else
+changes.
+
+### Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| `docker: command not found` | Docker Desktop is not installed or not running |
+| API cannot authenticate to MongoDB | The init script only runs on an empty volume. `npm run db:reset` recreates it |
+| Port 27017 already in use | Another MongoDB is running locally. Stop it, or change the published port in `infra/docker-compose.yml` |
+| `uv: command not found` | `pip install uv` |
+| `make: command not found` | Expected on Windows — use the npm equivalents below |
 
 ### Commands
 
