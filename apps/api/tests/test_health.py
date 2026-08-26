@@ -32,3 +32,17 @@ async def test_openapi_schema_is_served(client: AsyncClient) -> None:
     schema = response.json()
     assert schema["info"]["title"] == "Portfolio API"
     assert "/healthz" in schema["paths"]
+
+
+async def test_openapi_documents_the_error_contract(client: AsyncClient) -> None:
+    """A client should learn the error shape from the contract, not from a failed request."""
+    schema = (await client.get("/openapi.json")).json()
+
+    responses = schema["paths"]["/healthz"]["get"]["responses"]
+    assert {"404", "422", "429", "500"} <= responses.keys()
+    assert "Problem" in schema["components"]["schemas"]
+
+    problem_properties = schema["components"]["schemas"]["Problem"]["properties"]
+    assert {"type", "title", "status", "detail", "instance", "request_id"} <= (
+        problem_properties.keys()
+    )
