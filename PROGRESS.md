@@ -16,7 +16,7 @@
 |---|---|
 | **Last updated** | 2026-08-26 |
 | **Phase** | Wave 1 complete — Wave 2 ready |
-| **Next ticket** | T-202 · Application shell (T-004 blocked on the `workflow` token scope) |
+| **Next ticket** | T-202 · Application shell |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -46,8 +46,8 @@ make check     # lint + typecheck + tests, both apps
 make seed      # load content/ into MongoDB
 ```
 
-**Known gap:** the GitHub token lacks the `workflow` scope, so pushing `.github/workflows/`
-will be rejected. Fix once with `gh auth refresh -h github.com -s workflow`.
+**Resolved:** pushing `.github/workflows/` turned out to work with the existing `repo`
+scope — the `workflow` scope was not needed after all.
 
 ---
 
@@ -93,7 +93,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 ### Wave 2
 | ID | Ticket | Status | PR | Notes |
 |---|---|---|---|---|
-| T-004 | CI pipeline | ⬜ | — | Needs the `workflow` token scope |
+| T-004 | CI pipeline | ✅ | [#9](https://github.com/ThePawn8/personal-portfolio/pull/9) | 6 jobs, ~1 min wall clock; `ci` is the required check on `main` |
 | T-101 | Configuration, logging and error contract | ✅ | [#7](https://github.com/ThePawn8/personal-portfolio/pull/7) | 29 tests, 100 % coverage; error reference at `docs/ERRORS.md` |
 | T-201 | Design system and tokens | ✅ | [#8](https://github.com/ThePawn8/personal-portfolio/pull/8) | OKLCH tokens, both themes, contrast verified in CI by `npm run check:contrast` |
 | T-302 | Profile content | ⬜ | — | Source data extracted from the CV, see § 6 |
@@ -205,6 +205,7 @@ Recorded so a regression is visible rather than guessed at. Update when they mov
 | Web bundle after design system | **26.45 kB gzip** JS, **4.86 kB gzip** CSS | T-201 |
 | Web unit tests | 34 tests, 100 % statements | T-201 |
 | Contrast checks | 28 pairings, both themes, all passing | T-201 |
+| CI wall time | ~1 min (6 jobs in parallel) | T-004 |
 
 ---
 
@@ -236,8 +237,14 @@ Newest first. One entry per working session: what shipped, what was learned, wha
   contrast checker that reads the real token values and fails the build below WCAG
   thresholds
 
-**Wave 1 is complete.** Remaining in Wave 2: T-004 (CI, blocked on the token scope) and
-T-302 (profile content, needs the author's name and LinkedIn URL).
+- **T-004 merged** — CI runs every gate on every PR: lint, format, types, contrast, unit
+  tests with coverage, build, bundle budget, Playwright, gitleaks over full history, npm
+  audit and pip-audit. Verified negatively by pushing a deliberate lint failure: the
+  `ci` job failed, `e2e` skipped, and the PR moved to BLOCKED once `ci` became a required
+  check. `main` now requires it, with strict (up-to-date) branches.
+
+**Wave 1 and Wave 2 are complete except T-302** (profile content, needs the author's full
+name and LinkedIn URL).
 
 **T-101 gotchas**
 - `filterwarnings = ["error"]` earned its place immediately: `status.HTTP_422_UNPROCESSABLE_ENTITY`
