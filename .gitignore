@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Build output
+dist/
+build/
+*.egg-info/
+.vite/
+apps/web/stats.html
+
+# Test / coverage
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+playwright-report/
+test-results/
+blob-report/
+.nyc_output/
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+
+# Tooling caches
+.tsbuildinfo
+*.tsbuildinfo
+.turbo/
+.fly/
+
+# Local data
+data/mongo/
+dumps/
+
+# Personal files not for a public repo
+/CV*.pdf
