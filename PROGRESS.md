@@ -16,7 +16,7 @@
 |---|---|
 | **Last updated** | 2026-08-26 |
 | **Phase** | Wave 1 complete — Wave 2 ready |
-| **Next ticket** | T-004 · CI pipeline (blocked on the `workflow` token scope), or T-101 / T-201 in parallel |
+| **Next ticket** | T-202 · Application shell (T-004 blocked on the `workflow` token scope) |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -95,7 +95,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 |---|---|---|---|---|
 | T-004 | CI pipeline | ⬜ | — | Needs the `workflow` token scope |
 | T-101 | Configuration, logging and error contract | ✅ | [#7](https://github.com/ThePawn8/personal-portfolio/pull/7) | 29 tests, 100 % coverage; error reference at `docs/ERRORS.md` |
-| T-201 | Design system and tokens | ⬜ | — | Needs a visual direction decision |
+| T-201 | Design system and tokens | ✅ | [#8](https://github.com/ThePawn8/personal-portfolio/pull/8) | OKLCH tokens, both themes, contrast verified in CI by `npm run check:contrast` |
 | T-302 | Profile content | ⬜ | — | Source data extracted from the CV, see § 6 |
 
 ### Wave 3
@@ -202,6 +202,9 @@ Recorded so a regression is visible rather than guessed at. Update when they mov
 | E2E suite | 4 tests, 5.8 s, chromium + mobile | T-002 |
 | API unit coverage | 100 % statements, 5 tests in 0.1 s | T-003 |
 | API `/healthz` latency, local | 3.7 ms | T-003 |
+| Web bundle after design system | **26.45 kB gzip** JS, **4.86 kB gzip** CSS | T-201 |
+| Web unit tests | 34 tests, 100 % statements | T-201 |
+| Contrast checks | 28 pairings, both themes, all passing | T-201 |
 
 ---
 
@@ -229,8 +232,12 @@ Newest first. One entry per working session: what shipped, what was learned, wha
   logging with ULID request correlation, and the full RFC 9457 error contract with a
   published reference at [docs/ERRORS.md](./docs/ERRORS.md)
 
-**Wave 1 is complete.** Remaining in Wave 2: T-004 (CI, blocked), T-201 (design system) and
-T-302 (profile content).
+- **T-201 merged** — design tokens in OKLCH for both themes, five base components, and a
+  contrast checker that reads the real token values and fails the build below WCAG
+  thresholds
+
+**Wave 1 is complete.** Remaining in Wave 2: T-004 (CI, blocked on the token scope) and
+T-302 (profile content, needs the author's name and LinkedIn URL).
 
 **T-101 gotchas**
 - `filterwarnings = ["error"]` earned its place immediately: `status.HTTP_422_UNPROCESSABLE_ENTITY`
@@ -247,6 +254,17 @@ T-302 (profile content).
   `ProjectNotFoundError`, `RateLimitExceededError` and friends.
 - `tests/` is a package (`__init__.py`) so shared helpers import as `tests.conftest`;
   without it mypy sees the same file under two module names and refuses to continue.
+
+**T-201 gotchas**
+- `exactOptionalPropertyTypes` forbids `withDefaults(..., { optionalProp: undefined })` —
+  optional props must be omitted entirely. `vue/require-default-prop` disagrees, so that
+  rule is off with a comment explaining why.
+- Tailwind v4 generates utilities from theme namespaces: `--radius-card` gives
+  `rounded-card`, `--text-title` gives `text-title`. Use those, not `rounded-[--radius-card]`.
+- `@theme inline` is required for runtime theming: without `inline` the utilities bake in
+  the resolved colour and a theme switch does nothing.
+- Vitest suites that read source files need `// @vitest-environment node`; under jsdom
+  `import.meta.url` is an `http://` URL and cannot be converted to a path.
 
 **Learned / gotchas** (all cost real debugging time — do not rediscover them)
 - **TS 6 deprecates `baseUrl`.** Use `paths` alone; it resolves relative to the tsconfig file.
