@@ -15,8 +15,8 @@
 | | |
 |---|---|
 | **Last updated** | 2026-08-26 |
-| **Phase** | Wave 1 in progress |
-| **Next ticket** | T-301 · Content schema and authoring guide |
+| **Phase** | Wave 1 complete — Wave 2 ready |
+| **Next ticket** | T-004 · CI pipeline (blocked on the `workflow` token scope), or T-101 / T-201 in parallel |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -88,7 +88,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 | T-002 | Web application scaffold and tooling | ✅ | [#3](https://github.com/ThePawn8/personal-portfolio/pull/3) | All gates green; baseline bundle 24.07 kB gzip JS, 2.51 kB gzip CSS |
 | T-003 | API application scaffold and tooling | ✅ | [#4](https://github.com/ThePawn8/personal-portfolio/pull/4) | ruff + mypy strict + pytest green, 100 % coverage |
 | T-005 | Local development environment | ✅ | [#5](https://github.com/ThePawn8/personal-portfolio/pull/5) | ⚠️ Container start-up **not** verified — Docker is not installed here (see § 5, V1) |
-| T-301 | Content schema and authoring guide | ⬜ | — | No dependencies — good parallel starter |
+| T-301 | Content schema and authoring guide | ✅ | [#6](https://github.com/ThePawn8/personal-portfolio/pull/6) | Schema is the spec T-107 must implement; machine validation ships there |
 
 ### Wave 2
 | ID | Ticket | Status | PR | Notes |
@@ -221,6 +221,12 @@ Newest first. One entry per working session: what shipped, what was learned, wha
 - **T-005 merged** — local environment: MongoDB compose file with authentication, a
   least-privilege app user matching production, loopback-only port binding, and an
   idempotent `npm run setup` that creates `.env` and generates a random `IP_HASH_SALT`
+- **T-301 merged** — content authoring guide with the full field reference for projects and
+  profile, a template, a worked example, and guidance on writing case studies that name
+  *your* contribution and handle NDA work without leaking internals
+
+**Wave 1 is complete.** Wave 2 is T-004 (CI), T-101 (config/logging/errors), T-201 (design
+system) and T-302 (profile content) — all four are independent of each other.
 
 **Learned / gotchas** (all cost real debugging time — do not rediscover them)
 - **TS 6 deprecates `baseUrl`.** Use `paths` alone; it resolves relative to the tsconfig file.
