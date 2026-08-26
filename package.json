@@ -8,6 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
+    "setup": "node scripts/setup.mjs",
     "install:all": "npm --prefix apps/web ci && npm run api -- sync",
     "dev": "node scripts/dev.mjs",
     "dev:web": "npm --prefix apps/web run dev",
@@ -21,6 +22,9 @@
     "seed:check": "npm run api -- run python -m portfolio_api.seed --check",
     "db:up": "docker compose -f infra/docker-compose.yml up -d",
     "db:down": "docker compose -f infra/docker-compose.yml down",
+    "db:logs": "docker compose -f infra/docker-compose.yml logs -f mongo",
+    "db:shell": "docker exec -it portfolio-mongo mongosh -u portfolio -p local-dev-only --authenticationDatabase portfolio portfolio",
+    "db:reset": "docker compose -f infra/docker-compose.yml down -v && docker compose -f infra/docker-compose.yml up -d",
     "api": "node scripts/uv.mjs"
   }
 }
