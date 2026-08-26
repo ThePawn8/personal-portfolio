@@ -9,7 +9,7 @@ help: ## Show available targets
 
 install: ## Install dependencies for both applications
 	cd $(WEB) && npm ci
-	cd $(API) && uv sync --all-extras
+	cd $(API) && uv sync
 
 dev: ## Run the API and the web app together
 	@echo "API  -> http://localhost:8000/docs"
@@ -28,7 +28,7 @@ check-web: ## Quality gates for the web app
 	cd $(WEB) && npm run lint && npm run typecheck && npm run test
 
 check-api: ## Quality gates for the API
-	cd $(API) && uv run ruff check . && uv run ruff format --check . && uv run mypy src && uv run pytest
+	cd $(API) && uv run ruff check . && uv run ruff format --check . && uv run mypy src tests && uv run pytest
 
 test: test-web test-api ## Run all tests
 

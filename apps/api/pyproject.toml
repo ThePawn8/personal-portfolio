@@ -1,0 +1,121 @@
+[project]
+name = "portfolio-api"
+version = "0.1.0"
+description = "Portfolio API — project content and contact endpoints."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+    "fastapi>=0.118",
+    "uvicorn[standard]>=0.38",
+    "pydantic>=2.12",
+    "pydantic-settings>=2.12",
+    "structlog>=25.4",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4",
+    "pytest-asyncio>=1.2",
+    "pytest-cov>=7.0",
+    "httpx>=0.28",
+    "mypy>=1.18",
+    "ruff>=0.14",
+    "asgi-lifespan>=2.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/portfolio_api"]
+
+# ---------------------------------------------------------------------------
+# Ruff — linting and formatting
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # import sorting
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "A",    # builtin shadowing
+    "C4",   # comprehensions
+    "DTZ",  # timezone-aware datetimes only
+    "T20",  # no print statements
+    "SIM",  # simplify
+    "ARG",  # unused arguments
+    "PTH",  # use pathlib
+    "RUF",  # ruff-specific
+    "ANN",  # missing annotations
+    "S",    # bandit security checks
+    "ASYNC",# async correctness
+]
+ignore = [
+    "ANN401", # allow Any in the few places a decorator signature demands it
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests assert, use fixtures as arguments, and hardcode throwaway values by design.
+"tests/**/*.py" = ["S101", "ARG001", "ANN201", "S106"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["portfolio_api"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+# ---------------------------------------------------------------------------
+# mypy — strict typing
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+warn_no_return = true
+disallow_untyped_decorators = false  # FastAPI decorators are untyped upstream
+show_error_codes = true
+pretty = true
+files = ["src", "tests"]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = true
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "-ra",
+    "--cov=portfolio_api",
+    "--cov-report=term-missing",
+    "--cov-fail-under=80",
+]
+# Warnings are failures: a dependency deprecation should surface on the Dependabot PR
+# that introduced it, not months later when the behaviour is removed.
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+branch = true
+source = ["src/portfolio_api"]
+
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
