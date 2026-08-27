@@ -16,7 +16,7 @@ from pathlib import Path
 from portfolio_api.core.config import get_settings
 from portfolio_api.core.database import Database
 from portfolio_api.core.logging import configure_logging
-from portfolio_api.seed.loader import ContentError, load_projects
+from portfolio_api.seed.loader import ContentError, load_profile, load_projects
 from portfolio_api.seed.runner import seed_content
 
 # seed/__main__.py -> portfolio_api -> src -> api -> apps -> repository root.
@@ -58,9 +58,11 @@ async def _seed(content_dir: Path, *, dry_run: bool) -> int:
         await database.disconnect()
 
     verb = "would create/update" if dry_run else "created/updated"
+    profile_state = "written" if result.profile_written else "unchanged"
     print(  # noqa: T201
         f"{verb}: {len(result.created)} new, {len(result.updated)} changed, "
-        f"{len(result.unchanged)} unchanged ({result.total} total)"
+        f"{len(result.unchanged)} unchanged ({result.total} total); "
+        f"profile {profile_state}"
     )
     for slug in result.created:
         print(f"  + {slug}")  # noqa: T201
@@ -77,8 +79,12 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.check:
             projects = load_projects(args.content_dir)
+            profile = load_profile(args.content_dir)
             published = sum(1 for project in projects if project.published)
-            print(f"{len(projects)} project(s) valid, {published} published")  # noqa: T201
+            print(  # noqa: T201
+                f"profile for {profile.name} valid; "
+                f"{len(projects)} project(s) valid, {published} published"
+            )
             return 0
 
         return asyncio.run(_seed(args.content_dir, dry_run=args.dry_run))

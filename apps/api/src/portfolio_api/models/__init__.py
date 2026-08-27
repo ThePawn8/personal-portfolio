@@ -8,19 +8,33 @@ public response (ARCHITECTURE § 6.2).
 from beanie import Document
 
 from portfolio_api.models.message import Message
+from portfolio_api.models.profile import (
+    EducationEntry,
+    ExperienceEntry,
+    Language,
+    Profile,
+    ProfileLinks,
+    SkillGroup,
+)
 from portfolio_api.models.project import Metric, Mockup, Project, ProjectLinks, ProjectPeriod
 from portfolio_api.models.rate_limit import RateLimitBucket
 
 # Registered with Beanie at startup; this is also the list whose indexes get created.
-DOCUMENT_MODELS: list[type[Document]] = [Project, Message, RateLimitBucket]
+DOCUMENT_MODELS: list[type[Document]] = [Project, Profile, Message, RateLimitBucket]
 
 __all__ = [
     "DOCUMENT_MODELS",
+    "EducationEntry",
+    "ExperienceEntry",
+    "Language",
     "Message",
     "Metric",
     "Mockup",
+    "Profile",
+    "ProfileLinks",
     "Project",
     "ProjectLinks",
     "ProjectPeriod",
     "RateLimitBucket",
+    "SkillGroup",
 ]

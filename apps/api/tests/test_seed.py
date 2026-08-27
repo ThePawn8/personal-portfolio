@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from fastapi import FastAPI
 
-from portfolio_api.models import Project
-from portfolio_api.seed import ContentError, load_projects, seed_content
+from portfolio_api.models import Profile, Project
+from portfolio_api.seed import ContentError, load_profile, load_projects, seed_content
 from portfolio_api.seed.__main__ import DEFAULT_CONTENT_DIR, main, parse_args
 from portfolio_api.seed.loader import parse_project_file
 from portfolio_api.seed.renderer import render_markdown
@@ -55,6 +55,13 @@ def write_project(directory: Path, name: str, body: str) -> Path:
     projects.mkdir(parents=True, exist_ok=True)
     path = projects / name
     path.write_text(body, encoding="utf-8")
+
+    # `seed_content` loads projects and the profile together, so a fixture directory needs
+    # both to exist. Written here so every test does not have to remember.
+    profile = directory / "profile.yml"
+    if not profile.exists():
+        profile.write_text(VALID_PROFILE, encoding="utf-8")
+
     return path
 
 
@@ -301,3 +308,149 @@ class TestCommandLine:
 def test_default_content_dir_points_at_the_repository_content() -> None:
     """Same failure mode as REPO_ROOT: silently resolving to a directory that does not exist."""
     assert (DEFAULT_CONTENT_DIR / "projects").is_dir()
+
+
+VALID_PROFILE = """
+name: Andrés M
+headline: Frontend Developer
+location: Manizales, Colombia
+bio: >
+  A short bio.
+links:
+  github: https://github.com/example
+  linkedin: https://linkedin.com/in/example
+languages:
+  - name: Spanish
+    level: Native
+skills:
+  - group: Frontend
+    items: [Vue.js, TypeScript]
+experience:
+  - company: NICE
+    role: Frontend Developer
+    start: '2024-06'
+    end: null
+    summary: Frontend development.
+    highlights: []
+education:
+  - institution: Universidad de Caldas
+    degree: Systems and Computing Engineering
+    start: '2008'
+    end: '2014'
+certifications: [Curso Profesional de Vue.js]
+"""
+
+
+def write_profile(directory: Path, body: str) -> Path:
+    directory.mkdir(parents=True, exist_ok=True)
+
+    # A content directory without projects/ is a misconfiguration the loader refuses, so
+    # the fixture creates the (possibly empty) directory it expects.
+    (directory / "projects").mkdir(exist_ok=True)
+
+    path = directory / "profile.yml"
+    path.write_text(body, encoding="utf-8")
+    return path
+
+
+class TestProfileLoader:
+    def test_parses_a_valid_profile(self, tmp_path: Path) -> None:
+        write_profile(tmp_path, VALID_PROFILE)
+
+        profile = load_profile(tmp_path)
+
+        assert profile.name == "Andrés M"
+        assert profile.experience[0].company == "NICE"
+        assert profile.experience[0].end is None
+        assert profile.education[0].end == "2014"
+
+    def test_email_is_optional(self, tmp_path: Path) -> None:
+        """Publishing a personal address is the author's choice; the site must work either way."""
+        write_profile(tmp_path, VALID_PROFILE)
+
+        profile = load_profile(tmp_path)
+
+        assert profile.email is None
+
+    def test_rejects_an_unknown_field(self, tmp_path: Path) -> None:
+        write_profile(tmp_path, VALID_PROFILE + "\nnickname: typo\n")
+
+        with pytest.raises(ContentError, match="nickname"):
+            load_profile(tmp_path)
+
+    def test_rejects_a_malformed_date(self, tmp_path: Path) -> None:
+        write_profile(tmp_path, VALID_PROFILE.replace("start: '2024-06'", "start: June 2024"))
+
+        with pytest.raises(ContentError, match="start"):
+            load_profile(tmp_path)
+
+    def test_reports_a_missing_profile_file(self, tmp_path: Path) -> None:
+        with pytest.raises(FileNotFoundError, match="profile file not found"):
+            load_profile(tmp_path)
+
+    def test_the_repository_profile_is_valid(self) -> None:
+        """The real content/profile.yml must always pass — CI gates on this."""
+        content_dir = Path(__file__).resolve().parents[3] / "content"
+
+        profile = load_profile(content_dir)
+
+        assert profile.name
+        assert profile.links.github
+
+
+class TestProfileSeeding:
+    async def test_creates_the_profile(self, connected_app: FastAPI, tmp_path: Path) -> None:
+        write_profile(tmp_path, VALID_PROFILE)
+
+        result = await seed_content(tmp_path)
+
+        assert result.profile_written is True
+        stored = await Profile.find_one(Profile.key == "profile")
+        assert stored is not None
+        assert stored.name == "Andrés M"
+        assert len(stored.experience) == 1
+
+    async def test_running_twice_leaves_the_profile_alone(
+        self,
+        connected_app: FastAPI,
+        tmp_path: Path,
+    ) -> None:
+        write_profile(tmp_path, VALID_PROFILE)
+        await seed_content(tmp_path)
+
+        result = await seed_content(tmp_path)
+
+        assert result.profile_written is False
+
+    async def test_updates_a_changed_profile(
+        self,
+        connected_app: FastAPI,
+        tmp_path: Path,
+    ) -> None:
+        write_profile(tmp_path, VALID_PROFILE)
+        await seed_content(tmp_path)
+
+        write_profile(
+            tmp_path,
+            VALID_PROFILE.replace(
+                "headline: Frontend Developer", "headline: Senior Frontend Developer"
+            ),
+        )
+        result = await seed_content(tmp_path)
+
+        assert result.profile_written is True
+        stored = await Profile.find_one(Profile.key == "profile")
+        assert stored is not None
+        assert stored.headline == "Senior Frontend Developer"
+
+    async def test_dry_run_does_not_write_the_profile(
+        self,
+        connected_app: FastAPI,
+        tmp_path: Path,
+    ) -> None:
+        write_profile(tmp_path, VALID_PROFILE)
+
+        result = await seed_content(tmp_path, dry_run=True)
+
+        assert result.profile_written is True
+        assert await Profile.find_one(Profile.key == "profile") is None

@@ -144,3 +144,78 @@ def load_projects(content_dir: Path) -> list[ProjectContent]:
         raise ContentError(projects_dir, message)
 
     return projects
+
+
+class ProfileLinksContent(StrictModel):
+    github: str
+    linkedin: str
+    cv: str | None = None
+
+
+class LanguageContent(StrictModel):
+    name: str
+    level: str
+
+
+class SkillGroupContent(StrictModel):
+    group: str
+    items: list[str] = Field(min_length=1)
+
+
+class ExperienceContent(StrictModel):
+    company: str
+    role: str
+    start: str = Field(pattern=r"^\d{4}-\d{2}$")
+    end: str | None = Field(default=None, pattern=r"^\d{4}-\d{2}$")
+    summary: str
+    highlights: list[str] = Field(default_factory=list)
+
+
+class EducationContent(StrictModel):
+    institution: str
+    degree: str
+    start: str = Field(pattern=r"^\d{4}$")
+    end: str = Field(pattern=r"^\d{4}$")
+
+
+class ProfileContent(StrictModel):
+    """The profile as authored. Mirrors `content/README.md` field for field."""
+
+    name: str
+    headline: str = Field(max_length=80)
+    location: str
+    bio: str
+    # Optional: publishing a personal address invites spam, and the contact form is the
+    # intended channel. The site must render correctly without it.
+    email: str | None = None
+    links: ProfileLinksContent
+    languages: list[LanguageContent] = Field(default_factory=list)
+    skills: list[SkillGroupContent] = Field(default_factory=list)
+    experience: list[ExperienceContent] = Field(default_factory=list)
+    education: list[EducationContent] = Field(default_factory=list)
+    certifications: list[str] = Field(default_factory=list)
+
+
+def load_profile(content_dir: Path) -> ProfileContent:
+    """Parse and validate `content/profile.yml`."""
+    path = content_dir / "profile.yml"
+    if not path.is_file():
+        message = f"profile file not found: {path}"
+        raise FileNotFoundError(message)
+
+    try:
+        raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as error:
+        raise ContentError(path, f"not valid YAML: {error}") from error
+
+    if not isinstance(raw, dict):
+        raise ContentError(path, "profile.yml must be a mapping of fields")
+
+    try:
+        return ProfileContent(**raw)
+    except ValidationError as error:
+        details = "; ".join(
+            f"{'.'.join(str(part) for part in issue['loc'])}: {issue['msg']}"
+            for issue in error.errors()
+        )
+        raise ContentError(path, details) from error

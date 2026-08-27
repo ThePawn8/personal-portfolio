@@ -96,7 +96,7 @@ loses its meaning; quoted, it stays exactly what you wrote.
 | `headline` | string | ✅ | ≤ 80 characters: "Frontend Developer · Vue and TypeScript" |
 | `location` | string | ✅ | City, country |
 | `bio` | string | ✅ | First person, ≤ 120 words |
-| `email` | email | ✅ | Public contact address |
+| `email` | email | ➖ | Public contact address. Omit it to route everything through the contact form — publishing an address invites spam |
 | `links.github` | URL | ✅ | |
 | `links.linkedin` | URL | ✅ | |
 | `links.cv` | path | ➖ | PDF in `apps/web/public/` |
