@@ -22,7 +22,7 @@ pipeline are meant to be read.
 | Layer | Technology |
 |---|---|
 | Frontend | Vue 3.5 (Composition API), Vite 8, TypeScript strict, Tailwind v4, Pinia, vue-router |
-| Backend | FastAPI, Python 3.12, Beanie (Pydantic v2) over Motor, structlog |
+| Backend | FastAPI, Python 3.12, Beanie 2 (Pydantic v2 over async pymongo), structlog |
 | Database | MongoDB 7 |
 | Testing | Vitest, @vue/test-utils, Playwright + axe-core, pytest, httpx |
 | Quality | ESLint, Prettier, Ruff, mypy strict, coverage gates, gitleaks |
@@ -50,8 +50,9 @@ Content lives in git and is seeded into MongoDB — see
 
 ## Getting started
 
-**Prerequisites:** Node 24 (see `.nvmrc`), Python 3.12, Docker Desktop (for local MongoDB),
-and [uv](https://docs.astral.sh/uv/) (`pip install uv`).
+**Prerequisites:** Node 24 (see `.nvmrc`), Python 3.12, [uv](https://docs.astral.sh/uv/)
+(`pip install uv`), and a MongoDB 7 to talk to — Docker Desktop is the easy route, but see
+[Without Docker](#without-docker) if you would rather not install it.
 
 ```bash
 git clone https://github.com/ThePawn8/personal-portfolio.git
@@ -74,9 +75,32 @@ Actions secrets.
 
 ### Without Docker
 
-Point `MONGODB_URI` in `.env` at any reachable MongoDB 7 instance — a local `mongod`
-installation or a free MongoDB Atlas cluster — and skip `npm run db:up`. Nothing else
-changes.
+Point `MONGODB_URI` in `.env` at any reachable MongoDB 7 instance and skip `npm run db:up`.
+A free MongoDB Atlas cluster works, and so does a local `mongod`.
+
+If you have neither, this starts a real MongoDB with no Docker and no system install — it
+downloads a `mongod` binary into a cache directory and runs it on the usual port:
+
+```bash
+mkdir -p /tmp/mongo-dev && cd /tmp/mongo-dev
+npm init -y && npm install mongodb-memory-server
+
+cat > start.mjs <<'EOF'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+const server = await MongoMemoryServer.create({
+  instance: { port: 27017, dbName: 'portfolio' },
+  binary: { version: '7.0.14' },
+})
+console.log('ready:', server.getUri())
+setInterval(() => {}, 1 << 30)
+EOF
+
+node start.mjs
+```
+
+Single node, exactly like production ([ADR-0003](./docs/adr/0003-mongodb-self-hosted.md)), so
+the absence of multi-document transactions is consistent everywhere. It runs without
+authentication, so set `MONGODB_URI=mongodb://127.0.0.1:27017` in `.env` for that setup.
 
 ### Troubleshooting
 

@@ -10,3 +10,10 @@ class HealthResponse(BaseModel):
 
     status: Literal["ok"] = Field(description="Always `ok` when the process can respond.")
     version: str = Field(description="Deployed application version.", examples=["0.1.0"])
+
+
+class ReadyResponse(BaseModel):
+    """Response returned by the readiness probe."""
+
+    status: Literal["ready"] = Field(description="The instance can serve traffic.")
+    database: Literal["ok"] = Field(description="MongoDB answered a ping.")

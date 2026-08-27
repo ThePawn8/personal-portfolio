@@ -197,7 +197,7 @@ later is a build-config change, not a rewrite. Tracked as **T-503**.
 |---|---|---|
 | Framework | FastAPI (async) | Typed request/response, OpenAPI for free, ASGI |
 | Server | uvicorn (1 worker, 256 MB) | Traffic is tiny; a second worker doubles the Mongo pool for nothing |
-| ODM | Beanie (Pydantic v2 over Motor) | Documents *are* typed models — one schema, no drift |
+| ODM | Beanie 2 (Pydantic v2 over the async pymongo driver) | Documents *are* typed models — one schema, no drift |
 | Database | MongoDB 7, single node on a Fly volume | ADR-0003 |
 | Validation | Pydantic v2 | Same library validates HTTP and DB shapes |
 | Config | pydantic-settings | Env-driven, fails fast at boot on missing secrets |
@@ -415,7 +415,7 @@ graph TB
 |---|---|---|---|
 | Unit (web) | Vitest + @vue/test-utils + jsdom | `lib/`, composables, components in isolation | every PR |
 | Unit (api) | pytest | services, validation, seed parsing — no I/O | every PR |
-| Integration (api) | pytest + `httpx.ASGITransport` + Mongo service container | Router → service → repository → real Mongo | every PR |
+| Integration (api) | pytest + `httpx.ASGITransport` + real MongoDB | Router → service → repository → real Mongo | every PR |
 | Contract | Snapshot of `openapi.json` | Fails when the public contract changes silently | every PR |
 | E2E | Playwright (chromium) + axe-core | Home → project → contact submit; keyboard nav; a11y violations | every PR |
 

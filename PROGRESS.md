@@ -16,7 +16,7 @@
 |---|---|
 | **Last updated** | 2026-08-26 |
 | **Phase** | Waves 1–2 complete; Wave 3 in progress |
-| **Next ticket** | T-204 · Home page (backend chain blocked on Docker — see § 5, V1) |
+| **Next ticket** | T-103 · Projects API, then T-107 · Content seed |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -36,7 +36,7 @@ Verified on this machine (Windows 11, Git Bash):
 | git | 2.55.0 | |
 | gh | 2.96.0 | authenticated as `ThePawn8` |
 | uv | 0.12.6 | installed in session 2; `apps/api/uv.lock` is committed |
-| Docker | not installed | needed for local Mongo (T-005) → Docker Desktop |
+| Docker | not installed | **not required**: local MongoDB runs via `mongodb-memory-server` (recipe in README) |
 | make | not installed | use the npm equivalents (`npm run check`, `npm run dev`, …) |
 
 ```bash
@@ -102,7 +102,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 ### Wave 3
 | ID | Ticket | Status | PR | Notes |
 |---|---|---|---|---|
-| T-102 | MongoDB connection, models and indexes | ⬜ | — | |
+| T-102 | MongoDB connection, models and indexes | ✅ | [#12](https://github.com/ThePawn8/personal-portfolio/pull/12) | 42 tests against a real MongoDB, 98.85 % coverage |
 | T-202 | Application shell | ✅ | [#10](https://github.com/ThePawn8/personal-portfolio/pull/10) | Router, header/footer, 3-state theme toggle, 404, skip link |
 | T-303 | Project case studies | ⛔ | — | Blocked: needs the project list from the author |
 | T-304 | Mockups and imagery | ⛔ | — | Blocked by T-303 |
@@ -160,7 +160,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 | Q6 | Repository name and visibility | T-001 | ✅ `ThePawn8/personal-portfolio`, public |
 | Q7 | Visual direction | T-201 | ✅ Dark and light, both first-class, tokenised |
 | Q8 | Accounts to create: Fly.io, Vercel, Resend | T-402, T-403, T-106 | **Open** |
-| V1 | **Unverified:** `npm run db:up` has never been executed — Docker is not installed on this machine. The compose file and init script are syntax-checked only. Run it once Docker Desktop is installed, before T-102 depends on it | T-102 | **Open** |
+| V1 | `npm run db:up` (docker compose) has still never been executed — Docker is not installed. **No longer blocking:** local MongoDB runs without Docker (README → Without Docker), and CI uses a `mongo:7` service container. Verify the compose path whenever Docker gets installed | — | Downgraded to a nice-to-have |
 
 **Agreed way of working on content (Q1–Q3):** the author does not write the case studies from
 scratch. For each project, Claude asks a short set of questions (what was built, stack, role,
