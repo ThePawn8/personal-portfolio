@@ -16,7 +16,7 @@
 |---|---|
 | **Last updated** | 2026-08-26 |
 | **Phase** | Waves 1–2 complete; Wave 3 in progress |
-| **Next ticket** | T-107 · Content seed command |
+| **Next ticket** | T-104 · Profile API + T-302 · Profile content |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -112,7 +112,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 |---|---|---|---|---|
 | T-103 | Projects API | ✅ | [#13](https://github.com/ThePawn8/personal-portfolio/pull/13) | List + detail, ETag/304, camelCase wire format |
 | T-105 | Contact API | ⬜ | — | |
-| T-107 | Content seed command | ⬜ | — | |
+| T-107 | Content seed command | ✅ | [#14](https://github.com/ThePawn8/personal-portfolio/pull/14) | Idempotent, sanitised, `--check` gates content PRs in CI |
 | T-203 | Typed API client and data composables | ✅ | [#11](https://github.com/ThePawn8/personal-portfolio/pull/11) | Typed client, one loading state machine, snapshot fallback |
 | T-401 | API container image | ⬜ | — | |
 | T-402 | MongoDB on Fly.io | ⬜ | — | Needs a Fly.io account |
@@ -203,6 +203,7 @@ Recorded so a regression is visible rather than guessed at. Update when they mov
 | E2E suite | 4 tests, 5.8 s, chromium + mobile | T-002 |
 | API unit coverage | 100 % statements, 5 tests in 0.1 s | T-003 |
 | API `/healthz` latency, local | 3.7 ms | T-003 |
+| API tests | 83 tests, 95.8 % coverage, real MongoDB | T-107 |
 | Web bundle after design system | **26.45 kB gzip** JS, **4.86 kB gzip** CSS | T-201 |
 | Web unit tests | 34 tests, 100 % statements | T-201 |
 | Contrast checks | 28 pairings, both themes, all passing | T-201 |

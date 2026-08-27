@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from portfolio_api.core.config import PLACEHOLDER_SALT, get_settings
+from portfolio_api.core.config import PLACEHOLDER_SALT, REPO_ROOT, get_settings
 from tests.conftest import SettingsFactory
 
 VALID_PRODUCTION = {
@@ -81,3 +81,14 @@ def test_get_settings_is_cached() -> None:
     assert get_settings() is get_settings()
 
     get_settings.cache_clear()
+
+
+def test_repo_root_points_at_the_repository() -> None:
+    """A path computed by counting parents is one refactor away from silently wrong.
+
+    When it is wrong, `.env` is simply never read and every setting falls back to its
+    default — which looks like working software until something needs a real secret.
+    """
+    assert (REPO_ROOT / "content").is_dir()
+    assert (REPO_ROOT / ".env.example").is_file()
+    assert (REPO_ROOT / "apps" / "api").is_dir()

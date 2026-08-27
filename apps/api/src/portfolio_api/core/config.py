@@ -11,13 +11,14 @@ request that happens to need the missing value.
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal, Self
+from typing import Annotated, Literal, Self
 
 from pydantic import Field, field_validator, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 # One .env at the repository root feeds both applications (see README).
-REPO_ROOT = Path(__file__).resolve().parents[4]
+# core/config.py -> portfolio_api -> src -> api -> apps -> repository root.
+REPO_ROOT = Path(__file__).resolve().parents[5]
 
 PLACEHOLDER_SALT = "change-me-to-a-random-64-char-hex-string"
 MIN_SALT_LENGTH = 32
@@ -41,7 +42,12 @@ class Settings(BaseSettings):
     mongodb_uri: str = "mongodb://localhost:27017"
     mongodb_db: str = "portfolio"
 
-    cors_allowed_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173"])
+    # `NoDecode` stops pydantic-settings from JSON-parsing the value before the validator
+    # below sees it. Without it, the natural `.env` spelling `A,B` raises a parse error at
+    # source level and the validator never runs.
+    cors_allowed_origins: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["http://localhost:5173"]
+    )
 
     resend_api_key: str = ""
     contact_to_email: str = ""

@@ -13,6 +13,9 @@ dependencies = [
     "structlog>=25.4",
     "python-ulid>=4.0.1",
     "beanie>=2.2.0",
+    "pyyaml>=6.0.3",
+    "markdown-it-py>=4.2.0",
+    "nh3>=0.3.7",
 ]
 
 [dependency-groups]
@@ -24,6 +27,7 @@ dev = [
     "mypy>=1.18",
     "ruff>=0.14",
     "asgi-lifespan>=2.1.0",
+    "types-pyyaml>=6.0.12.20260815",
 ]
 
 [build-system]
@@ -67,8 +71,10 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-# Tests assert, use fixtures as arguments, and hardcode throwaway values by design.
-"tests/**/*.py" = ["S101", "ARG001", "ANN201", "S106"]
+# Tests assert, hardcode throwaway values, and take fixtures as arguments whose only job
+# is a side effect (a connected database, a seeded collection) — which linters read as
+# unused parameters.
+"tests/**/*.py" = ["S101", "ARG001", "ARG002", "ANN201", "S106"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["portfolio_api"]
