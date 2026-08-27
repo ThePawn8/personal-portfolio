@@ -12,7 +12,7 @@ from portfolio_api.core.database import Database
 from portfolio_api.core.errors import register_exception_handlers
 from portfolio_api.core.logging import configure_logging, get_logger
 from portfolio_api.core.middleware import REQUEST_ID_HEADER, RequestContextMiddleware
-from portfolio_api.routers import health
+from portfolio_api.routers import health, projects
 from portfolio_api.schemas.problem import Problem
 
 logger = get_logger(__name__)
@@ -92,6 +92,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     register_exception_handlers(app)
 
     app.include_router(health.router)
+    app.include_router(projects.router)
 
     return app
 
