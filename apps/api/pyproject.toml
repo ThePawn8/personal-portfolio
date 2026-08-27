@@ -12,6 +12,7 @@ dependencies = [
     "pydantic-settings>=2.12",
     "structlog>=25.4",
     "python-ulid>=4.0.1",
+    "beanie>=2.2.0",
 ]
 
 [dependency-groups]

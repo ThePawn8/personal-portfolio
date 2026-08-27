@@ -116,6 +116,20 @@ jobs:
     defaults:
       run:
         working-directory: apps/api
+
+    # A real MongoDB, not a mock. Unique constraints, TTL indexes and compound index shapes
+    # only exist in the server, so a mocked database would only prove the mock works.
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - uses: actions/checkout@v4
 
@@ -142,6 +156,8 @@ jobs:
 
       - name: Tests
         run: uv run pytest
+        env:
+          MONGODB_TEST_URI: mongodb://127.0.0.1:27017
 
   e2e:
     name: e2e · playwright

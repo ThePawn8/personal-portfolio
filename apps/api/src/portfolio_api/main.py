@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from portfolio_api import __version__
 from portfolio_api.core.config import Settings, get_settings
+from portfolio_api.core.database import Database
 from portfolio_api.core.errors import register_exception_handlers
 from portfolio_api.core.logging import configure_logging, get_logger
 from portfolio_api.core.middleware import REQUEST_ID_HEADER, RequestContextMiddleware
@@ -28,15 +29,22 @@ PROBLEM_RESPONSES: dict[int | str, dict[str, object]] = {
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Manage resources whose lifetime matches the application.
+    """Open the database once for the life of the process, and close it on the way out.
 
-    The MongoDB client and Beanie initialisation are wired in here in T-102; the hook
-    exists now so nothing has to be restructured when they arrive.
+    Startup fails loudly if MongoDB cannot be reached: a process that boots without its
+    database only serves errors, and doing so silently makes the deploy look successful.
     """
     settings: Settings = app.state.settings
+    database: Database = app.state.database
+
+    await database.connect()
     logger.info("application_started", env=settings.app_env, version=__version__)
-    yield
-    logger.info("application_stopped")
+
+    try:
+        yield
+    finally:
+        await database.disconnect()
+        logger.info("application_stopped")
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -61,6 +69,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         responses=PROBLEM_RESPONSES,
     )
     app.state.settings = settings
+    # Built here, connected in the lifespan: constructing the app must stay free of I/O so
+    # tests can create one without a database.
+    app.state.database = Database(uri=settings.mongodb_uri, name=settings.mongodb_db)
 
     # Middleware added last runs first. CORS is outermost so that error responses — which
     # are produced deeper in the stack — still carry the headers a browser needs to read
