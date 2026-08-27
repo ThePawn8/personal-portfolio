@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { RouterLink, type RouteLocationRaw } from 'vue-router'
 
 /**
  * The one interactive control in the system.
  *
- * Renders a `<button>`, or an `<a>` when given `href` — because a control that navigates
- * must be a link (middle-click, open in new tab, copy address all work) and a control that
- * acts must be a button. Styling one to look like the other is where keyboard and screen
- * reader support usually breaks.
+ * Renders a `<button>`, an `<a>` when given `href`, or a `RouterLink` when given `to` —
+ * because a control that navigates must be a link (middle-click, open in new tab and copy
+ * address all have to work) and a control that acts must be a button. Styling one to look
+ * like the other is where keyboard and screen reader support usually breaks.
  */
 type Variant = 'primary' | 'secondary' | 'ghost'
 type Size = 'sm' | 'md'
@@ -16,7 +17,9 @@ const props = withDefaults(
   defineProps<{
     variant?: Variant
     size?: Size
-    /** Present -> renders an anchor. */
+    /** Internal navigation -> renders a RouterLink (a real anchor, client-side routed). */
+    to?: RouteLocationRaw
+    /** External navigation -> renders a plain anchor. */
     href?: string
     /** Only meaningful for buttons. */
     type?: 'button' | 'submit'
@@ -40,15 +43,38 @@ const SIZES: Record<Size, string> = {
   md: 'h-11 px-5 text-base gap-2',
 }
 
-const isLink = computed(() => props.href !== undefined)
+const element = computed(() => {
+  if (props.to !== undefined) return RouterLink
+  return props.href !== undefined ? 'a' : 'button'
+})
 
 /** Loading is a form of disabled — otherwise a double submit is one impatient click away. */
 const isInactive = computed(() => props.disabled || props.loading)
+
+/**
+ * Attributes are composed per element rather than bound individually.
+ *
+ * Binding `:href="undefined"` alongside `:to` looks harmless but is not: the undefined
+ * attribute falls through onto the anchor RouterLink renders and overrides the href it
+ * computed, producing an `<a>` with no href — which has no link role, is unreachable by
+ * keyboard and is invisible to assistive technology.
+ */
+const elementAttrs = computed(() => {
+  if (props.to !== undefined) {
+    return { to: props.to, 'aria-disabled': isInactive.value ? 'true' : undefined }
+  }
+
+  if (props.href !== undefined) {
+    return { href: props.href, 'aria-disabled': isInactive.value ? 'true' : undefined }
+  }
+
+  return { type: props.type, disabled: isInactive.value }
+})
 </script>
 
 <template>
   <component
-    :is="isLink ? 'a' : 'button'"
+    :is="element"
     :class="[
       'inline-flex items-center justify-center rounded-control font-medium',
       'transition-colors duration-150',
@@ -56,10 +82,7 @@ const isInactive = computed(() => props.disabled || props.loading)
       VARIANTS[variant],
       SIZES[size],
     ]"
-    :href="href"
-    :type="isLink ? undefined : type"
-    :disabled="isLink ? undefined : isInactive"
-    :aria-disabled="isLink && isInactive ? 'true' : undefined"
+    v-bind="elementAttrs"
     :aria-busy="loading ? 'true' : undefined"
   >
     <svg
