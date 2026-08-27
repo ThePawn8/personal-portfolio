@@ -1,28 +1,31 @@
 # Profile — the person behind the portfolio.
 #
-# ⚠️ DRAFT. Every fact here comes from the author's own CV; nothing has been invented.
-# Four things still need the author, and are marked "NEEDS AUTHOR" below:
+# Sources: the author's CV and their LinkedIn profile. Nothing here is inferred or invented.
 #
-#   1. Full name (the CV shows only "Andrés M")
+# ⚠️ Three things still need the author, marked "NEEDS AUTHOR" below:
+#
+#   1. Full name (both the CV and LinkedIn show only "Andrés M")
 #   2. Whether to publish a contact email, or rely on the contact form alone
-#   3. Two or three highlights per role — what was actually built, with numbers
-#   4. Whether the Anglus and Easynet periods really overlapped (the CV says they did)
+#   3. Two or three highlights per role — what was actually built, with numbers.
+#      Neither the CV nor LinkedIn describes the work at NICE, Playvox or Easynet, so
+#      only the author can supply this.
 #
 # Field reference: ./README.md
 
 name: Andrés M # NEEDS AUTHOR: full name as it should appear on the site
-headline: Frontend Developer · Vue and TypeScript
+headline: Frontend Developer · JavaScript and Python
 location: Manizales, Colombia
 
-# NEEDS AUTHOR: written from the CV summary, but a bio should sound like the person.
-# Rewrite it in your own voice — this is the first thing a recruiter reads.
+# Condensed from the author's own LinkedIn summary, with the adjectives removed and the
+# stack made specific. Rewrite it in your own voice if the tone is not yours — this is the
+# first thing a recruiter reads.
 bio: >
   I am a Systems and Computing Engineer who has spent the last decade building web
-  applications, mostly on the frontend and mostly in Vue and TypeScript. I have worked
-  across the stack — Python and Django services, REST APIs, Android apps — which means I
-  can follow a problem from the interface down to the data and back. I care about
-  interfaces that stay fast and usable as they grow, and about explaining technical
-  trade-offs clearly to the people who have to live with them.
+  applications, most of that time on the frontend. I have worked across the stack —
+  JavaScript and AngularJS interfaces on one side, Python and Django services and REST APIs
+  on the other, with some Android along the way — which means I can follow a problem from
+  the screen down to the data and back. I like making technical trade-offs legible to the
+  people who have to live with them.
 
 # Deliberately omitted until the author decides: publishing a personal address invites
 # spam, and the contact form (T-208) exists for exactly this. Uncomment to publish it.
@@ -39,24 +42,27 @@ languages:
   - name: English
     level: Full professional
 
-# Ordered by depth, not alphabetically: the first item in each group is what the author
-# would be most comfortable being interviewed on.
+# Ordered by evidence, not by preference: LinkedIn-validated skills first, then the two
+# certified more recently. Vue.js and TypeScript are certifications rather than endorsed
+# skills — this portfolio is itself built in both, which is the stronger evidence.
 skills:
   - group: Frontend
-    items: [Vue.js, TypeScript, JavaScript, HTML5, CSS]
+    items: [JavaScript, AngularJS, HTML5, CSS, jQuery, Stylus, Vue.js, TypeScript]
   - group: Backend
-    items: [Python, Django, REST APIs]
+    items: [Python, Django, Django REST Framework]
   - group: Mobile
     items: [Android]
   - group: Tooling
     items: [Git, GitHub]
 
+# The Anglus and Easynet periods overlap. That is not an error: both appear concurrently on
+# the author's LinkedIn profile.
 experience:
   - company: NICE
     role: Frontend Developer
     start: '2024-06'
     end: null
-    summary: Frontend development on customer-experience software.
+    summary: Frontend development on customer-experience software. Full-time, remote.
     highlights: [] # NEEDS AUTHOR: 2-4 bullets, each starting with a verb, with numbers
 
   - company: Playvox
