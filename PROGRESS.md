@@ -16,7 +16,7 @@
 |---|---|
 | **Last updated** | 2026-08-26 |
 | **Phase** | Waves 1–2 complete; Wave 3 in progress |
-| **Next ticket** | T-104 · Profile API + T-302 · Profile content |
+| **Next ticket** | T-104 · Profile API |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -97,7 +97,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 | T-004 | CI pipeline | ✅ | [#9](https://github.com/ThePawn8/personal-portfolio/pull/9) | 6 jobs, ~1 min wall clock; `ci` is the required check on `main` |
 | T-101 | Configuration, logging and error contract | ✅ | [#7](https://github.com/ThePawn8/personal-portfolio/pull/7) | 29 tests, 100 % coverage; error reference at `docs/ERRORS.md` |
 | T-201 | Design system and tokens | ✅ | [#8](https://github.com/ThePawn8/personal-portfolio/pull/8) | OKLCH tokens, both themes, contrast verified in CI by `npm run check:contrast` |
-| T-302 | Profile content | ⬜ | — | Source data extracted from the CV, see § 6 |
+| T-302 | Profile content | ✅ | [#15](https://github.com/ThePawn8/personal-portfolio/pull/15) | ⚠️ DRAFT — 4 items marked NEEDS AUTHOR in `content/profile.yml` |
 
 ### Wave 3
 | ID | Ticket | Status | PR | Notes |
@@ -155,8 +155,8 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 | Q1 | Which projects go in the portfolio? Name, employer/personal, dates, stack, your specific contribution, measurable impact | T-303, T-304 | **Open** |
 | Q2 | Which projects have public links (live site, repository, store listing)? Which are under NDA and can only be described? | T-303 | **Open** |
 | Q3 | Do you have screenshots or mockups for any of them, or should we design placeholder visuals? | T-304 | **Open** |
-| Q4 | Full name for the site and the CV filename (the CV shows "Andrés M") | T-302, T-305 | **Open** |
-| Q5 | Public GitHub and LinkedIn URLs to display | T-302 | **Open** |
+| Q4 | Full name for the site and the CV filename (the CV shows "Andrés M") | T-302, T-305 | **Open** — `profile.yml` currently says "Andrés M" |
+| Q5 | Public GitHub and LinkedIn URLs to display | T-302 | Partially answered from the CV; **confirm the LinkedIn URL** and decide whether to publish an email at all |
 | Q6 | Repository name and visibility | T-001 | ✅ `ThePawn8/personal-portfolio`, public |
 | Q7 | Visual direction | T-201 | ✅ Dark and light, both first-class, tokenised |
 | Q8 | Accounts to create: Fly.io, Vercel, Resend | T-402, T-403, T-106 | **Open** |

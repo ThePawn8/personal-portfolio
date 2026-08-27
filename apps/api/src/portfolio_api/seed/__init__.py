@@ -8,7 +8,7 @@ The seed is deliberately **additive**: it never deletes. Retiring a project mean
 `published: false`, so a file removed by accident cannot silently wipe live content.
 """
 
-from portfolio_api.seed.loader import ContentError, load_projects
+from portfolio_api.seed.loader import ContentError, load_profile, load_projects
 from portfolio_api.seed.runner import SeedResult, seed_content
 
-__all__ = ["ContentError", "SeedResult", "load_projects", "seed_content"]
+__all__ = ["ContentError", "SeedResult", "load_profile", "load_projects", "seed_content"]

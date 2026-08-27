@@ -1,0 +1,93 @@
+# Profile — the person behind the portfolio.
+#
+# ⚠️ DRAFT. Every fact here comes from the author's own CV; nothing has been invented.
+# Four things still need the author, and are marked "NEEDS AUTHOR" below:
+#
+#   1. Full name (the CV shows only "Andrés M")
+#   2. Whether to publish a contact email, or rely on the contact form alone
+#   3. Two or three highlights per role — what was actually built, with numbers
+#   4. Whether the Anglus and Easynet periods really overlapped (the CV says they did)
+#
+# Field reference: ./README.md
+
+name: Andrés M # NEEDS AUTHOR: full name as it should appear on the site
+headline: Frontend Developer · Vue and TypeScript
+location: Manizales, Colombia
+
+# NEEDS AUTHOR: written from the CV summary, but a bio should sound like the person.
+# Rewrite it in your own voice — this is the first thing a recruiter reads.
+bio: >
+  I am a Systems and Computing Engineer who has spent the last decade building web
+  applications, mostly on the frontend and mostly in Vue and TypeScript. I have worked
+  across the stack — Python and Django services, REST APIs, Android apps — which means I
+  can follow a problem from the interface down to the data and back. I care about
+  interfaces that stay fast and usable as they grow, and about explaining technical
+  trade-offs clearly to the people who have to live with them.
+
+# Deliberately omitted until the author decides: publishing a personal address invites
+# spam, and the contact form (T-208) exists for exactly this. Uncomment to publish it.
+# email: you@example.com
+
+links:
+  github: https://github.com/ThePawn8
+  linkedin: https://www.linkedin.com/in/andrés-m-1642a3a0
+  # cv: /Andres-Medina-CV.pdf   # added in T-305
+
+languages:
+  - name: Spanish
+    level: Native
+  - name: English
+    level: Full professional
+
+# Ordered by depth, not alphabetically: the first item in each group is what the author
+# would be most comfortable being interviewed on.
+skills:
+  - group: Frontend
+    items: [Vue.js, TypeScript, JavaScript, HTML5, CSS]
+  - group: Backend
+    items: [Python, Django, REST APIs]
+  - group: Mobile
+    items: [Android]
+  - group: Tooling
+    items: [Git, GitHub]
+
+experience:
+  - company: NICE
+    role: Frontend Developer
+    start: '2024-06'
+    end: null
+    summary: Frontend development on customer-experience software.
+    highlights: [] # NEEDS AUTHOR: 2-4 bullets, each starting with a verb, with numbers
+
+  - company: Playvox
+    role: Frontend Developer
+    start: '2020-06'
+    end: '2024-09'
+    summary: Frontend development on workforce-management software for support teams.
+    highlights: [] # NEEDS AUTHOR
+
+  - company: Easynet S.A.S
+    role: Frontend Developer
+    start: '2017-02'
+    end: '2020-06'
+    summary: Frontend development.
+    highlights: [] # NEEDS AUTHOR
+
+  - company: Anglus S.A.S
+    role: Development Engineer
+    start: '2014-03'
+    end: '2018-11'
+    summary: Frontend and backend development, Android applications and API development.
+    highlights: [] # NEEDS AUTHOR
+
+education:
+  - institution: Universidad de Caldas
+    degree: Systems and Computing Engineering
+    start: '2008'
+    end: '2014'
+
+certifications:
+  - Curso Profesional de Vue.js
+  - TypeScript Essential Training
+  - Learning TypeScript
+  - Curso Profesional de Git y GitHub

@@ -91,7 +91,8 @@ export interface Profile {
   headline: string
   location: string
   bio: string
-  email: string
+  /** Optional: the author may route all contact through the form instead. */
+  email?: string
   links: { github: string; linkedin: string; cv?: string }
   languages: Language[]
   skills: SkillGroup[]

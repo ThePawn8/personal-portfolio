@@ -7,9 +7,22 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from portfolio_api.core.logging import get_logger
-from portfolio_api.models import Project
+from portfolio_api.models import Profile, Project
+from portfolio_api.models.profile import (
+    PROFILE_KEY,
+    EducationEntry,
+    ExperienceEntry,
+    Language,
+    ProfileLinks,
+    SkillGroup,
+)
 from portfolio_api.models.project import Metric, Mockup, ProjectLinks, ProjectPeriod
-from portfolio_api.seed.loader import ProjectContent, load_projects
+from portfolio_api.seed.loader import (
+    ProfileContent,
+    ProjectContent,
+    load_profile,
+    load_projects,
+)
 
 logger = get_logger(__name__)
 
@@ -40,6 +53,7 @@ class SeedResult:
     created: list[str] = field(default_factory=list)
     updated: list[str] = field(default_factory=list)
     unchanged: list[str] = field(default_factory=list)
+    profile_written: bool = False
 
     @property
     def total(self) -> int:
@@ -118,11 +132,55 @@ async def seed_content(content_dir: Path, *, dry_run: bool = False) -> SeedResul
             existing.updated_at = datetime.now(UTC)
             await existing.save()
 
+    result.profile_written = await _seed_profile(content_dir, dry_run=dry_run)
+
     logger.info(
         "seed_completed",
         created=len(result.created),
         updated=len(result.updated),
         unchanged=len(result.unchanged),
+        profile_written=result.profile_written,
         dry_run=dry_run,
     )
     return result
+
+
+def _to_profile_fields(content: ProfileContent) -> dict[str, object]:
+    return {
+        "name": content.name,
+        "headline": content.headline,
+        "location": content.location,
+        "bio": content.bio.strip(),
+        "email": content.email,
+        "links": ProfileLinks(**content.links.model_dump()),
+        "languages": [Language(**item.model_dump()) for item in content.languages],
+        "skills": [SkillGroup(**item.model_dump()) for item in content.skills],
+        "experience": [ExperienceEntry(**item.model_dump()) for item in content.experience],
+        "education": [EducationEntry(**item.model_dump()) for item in content.education],
+        "certifications": content.certifications,
+    }
+
+
+async def _seed_profile(content_dir: Path, *, dry_run: bool) -> bool:
+    """Upsert the single profile document. Returns whether anything changed."""
+    fields = _to_profile_fields(load_profile(content_dir))
+    existing = await Profile.find_one(Profile.key == PROFILE_KEY)
+
+    unchanged = existing is not None and not any(
+        _normalise(getattr(existing, name)) != _normalise(value) for name, value in fields.items()
+    )
+    if unchanged:
+        return False
+
+    if dry_run:
+        return True
+
+    if existing is None:
+        await Profile(key=PROFILE_KEY, **fields).insert()
+    else:
+        for name, value in fields.items():
+            setattr(existing, name, value)
+        existing.updated_at = datetime.now(UTC)
+        await existing.save()
+
+    return True
