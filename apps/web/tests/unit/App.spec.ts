@@ -1,21 +1,54 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import App from '@/App.vue'
+import { router } from '@/router'
 
-describe('App', () => {
-  it('renders a single top-level landmark', () => {
-    const wrapper = mount(App)
+async function mountApp() {
+  const wrapper = mount(App, { global: { plugins: [router] } })
+  await router.isReady()
+  await wrapper.vm.$nextTick()
+  return wrapper
+}
 
-    expect(wrapper.find('main').exists()).toBe(true)
+describe('App shell', () => {
+  beforeEach(async () => {
+    await router.replace('/')
   })
 
-  it('renders exactly one level-1 heading', () => {
-    const wrapper = mount(App)
+  it('renders the landmark structure a screen reader navigates by', async () => {
+    const wrapper = await mountApp()
 
-    const headings = wrapper.findAll('h1')
+    expect(wrapper.find('header').exists()).toBe(true)
+    expect(wrapper.find('main#main-content').exists()).toBe(true)
+    expect(wrapper.find('footer').exists()).toBe(true)
+    expect(wrapper.findAll('nav[aria-label="Main"]').length).toBeGreaterThan(0)
+  })
 
-    expect(headings).toHaveLength(1)
-    expect(headings[0]?.text()).toBe('Portfolio')
+  it('puts a skip link first, targeting the main landmark', async () => {
+    const wrapper = await mountApp()
+
+    // First focusable element on the page, or a keyboard user tabs the whole nav on
+    // every single route.
+    const skipLink = wrapper.find('a.skip-link')
+    expect(skipLink.exists()).toBe(true)
+    expect(skipLink.attributes('href')).toBe('#main-content')
+    expect(wrapper.find(skipLink.attributes('href') as string).exists()).toBe(true)
+  })
+
+  it('renders exactly one level-1 heading per route', async () => {
+    const wrapper = await mountApp()
+
+    expect(wrapper.findAll('h1')).toHaveLength(1)
+  })
+
+  it('swaps the view on navigation', async () => {
+    const wrapper = await mountApp()
+    expect(wrapper.find('h1').text()).toBe('Andrés M')
+
+    await router.push({ name: 'contact' })
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.find('h1').text()).toBe('Contact')
   })
 })

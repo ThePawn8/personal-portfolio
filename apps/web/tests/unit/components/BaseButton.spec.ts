@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
 import BaseButton from '@/components/base/BaseButton.vue'
+import { router } from '@/router'
 
 describe('BaseButton', () => {
   it('renders a button element by default', () => {
@@ -22,6 +23,21 @@ describe('BaseButton', () => {
     expect(wrapper.attributes('href')).toBe('https://example.com')
     // A `type` attribute on an anchor is meaningless and misleads assistive technology.
     expect(wrapper.attributes('type')).toBeUndefined()
+  })
+
+  it('renders a router link with a real href when given `to`', async () => {
+    // Regression guard: binding an undefined `href` alongside `to` used to fall through
+    // onto RouterLink's anchor and erase the href it had just computed, leaving an <a>
+    // with no link role at all.
+    const wrapper = mount(BaseButton, {
+      props: { to: { name: 'home' } },
+      slots: { default: 'Back to home' },
+      global: { plugins: [router] },
+    })
+    await router.isReady()
+
+    expect(wrapper.element.tagName).toBe('A')
+    expect(wrapper.attributes('href')).toBe('/')
   })
 
   it('disables the button when disabled', () => {

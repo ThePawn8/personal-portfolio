@@ -15,8 +15,8 @@
 | | |
 |---|---|
 | **Last updated** | 2026-08-26 |
-| **Phase** | Wave 1 complete — Wave 2 ready |
-| **Next ticket** | T-202 · Application shell |
+| **Phase** | Waves 1–2 complete; Wave 3 in progress |
+| **Next ticket** | T-203 · Typed API client and data composables |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -102,7 +102,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 | ID | Ticket | Status | PR | Notes |
 |---|---|---|---|---|
 | T-102 | MongoDB connection, models and indexes | ⬜ | — | |
-| T-202 | Application shell | ⬜ | — | |
+| T-202 | Application shell | ✅ | [#10](https://github.com/ThePawn8/personal-portfolio/pull/10) | Router, header/footer, 3-state theme toggle, 404, skip link |
 | T-303 | Project case studies | ⛔ | — | Blocked: needs the project list from the author |
 | T-304 | Mockups and imagery | ⛔ | — | Blocked by T-303 |
 
@@ -206,6 +206,8 @@ Recorded so a regression is visible rather than guessed at. Update when they mov
 | Web unit tests | 34 tests, 100 % statements | T-201 |
 | Contrast checks | 28 pairings, both themes, all passing | T-201 |
 | CI wall time | ~1 min (6 jobs in parallel) | T-004 |
+| Web bundle with router + shell | **42.80 kB gzip** JS, 5 lazy route chunks | T-202 |
+| Web tests | 71 unit (98 % statements), 21 e2e | T-202 |
 
 ---
 
@@ -243,8 +245,27 @@ Newest first. One entry per working session: what shipped, what was learned, wha
   `ci` job failed, `e2e` skipped, and the PR moved to BLOCKED once `ci` became a required
   check. `main` now requires it, with strict (up-to-date) branches.
 
-**Wave 1 and Wave 2 are complete except T-302** (profile content, needs the author's full
-name and LinkedIn URL).
+- **T-202 merged** — application shell: code-split router, sticky header with responsive
+  navigation, footer, three-state theme control, 404 view, skip link, and recovery from
+  stale chunks after a deploy
+
+**Waves 1 and 2 are complete except T-302** (profile content, needs the author's full name
+and LinkedIn URL).
+
+**T-202 gotchas**
+- **Binding `:href="undefined"` alongside `:to` breaks RouterLink.** The undefined
+  attribute falls through onto the anchor and overrides the href RouterLink computed,
+  producing an `<a>` with no href — no link role, invisible to assistive technology. Found
+  by an e2e test, not by types. Attributes are now composed per element in `BaseButton`,
+  with a regression test.
+- Playwright cannot `.check()` an `sr-only` radio (it fails the actionability check).
+  Click the label instead, which is what a person does anyway.
+- e2e files need their own tsconfig with DOM types: `page.evaluate` callbacks run in the
+  browser even though the runner is Node.
+- jsdom has no layout, so `window.scrollTo` prints "Not implemented" on every navigation.
+  Stubbed in `tests/setup.ts`; real scroll restoration is covered in Playwright.
+- `router.resolve()` returns a type whose `name` can be `null`, which does not satisfy
+  `scrollBehavior`'s parameter. Navigate and read `router.currentRoute.value` instead.
 
 **T-101 gotchas**
 - `filterwarnings = ["error"]` earned its place immediately: `status.HTTP_422_UNPROCESSABLE_ENTITY`

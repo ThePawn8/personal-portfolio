@@ -5,18 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <title>Portfolio</title>
+    <title>Andrés M · Software Developer</title>
     <meta name="description" content="Software developer portfolio." />
 
     <!--
       Full SEO and Open Graph metadata is added in T-209. Because this is a client-rendered
       SPA (ADR-0002), social crawlers only ever read what is in this file.
     -->
+
+    <script>
+      /*
+        Applies the saved theme before the first paint. Anything that runs after the bundle
+        loads is already too late: the page would flash light, then switch to dark.
+
+        Kept inline for that reason — it must not cost a request. T-403 must therefore allow
+        it in the Content-Security-Policy by hash, not by 'unsafe-inline'.
+      */
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('portfolio-theme')
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.setAttribute('data-theme', stored)
+          }
+        } catch (error) {
+          /* Blocked site data: fall through to the system preference. */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>
     <noscript>
-      <p>This portfolio requires JavaScript. Source and content are also available on GitHub.</p>
+      <p style="padding: 2rem; font-family: system-ui, sans-serif">
+        This portfolio needs JavaScript to run. The source and all written content are also
+        available at
+        <a href="https://github.com/ThePawn8/personal-portfolio">github.com/ThePawn8</a>
+        .
+      </p>
     </noscript>
     <script type="module" src="/src/main.ts"></script>
   </body>
