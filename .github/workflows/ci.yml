@@ -159,6 +159,11 @@ jobs:
         env:
           MONGODB_TEST_URI: mongodb://127.0.0.1:27017
 
+      # Gates content pull requests without a database: a malformed project fails here
+      # rather than appearing broken in production.
+      - name: Validate content
+        run: uv run python -m portfolio_api.seed --check
+
   e2e:
     name: e2e · playwright
     needs: [changes, web-quality]
