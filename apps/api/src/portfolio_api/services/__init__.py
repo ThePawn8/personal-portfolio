@@ -4,6 +4,7 @@ Routers parse and serialise; repositories query. Whatever is left — the decisi
 here, where it can be tested without an HTTP client or a database session.
 """
 
+from portfolio_api.services.profile import ProfileService
 from portfolio_api.services.projects import ProjectService
 
-__all__ = ["ProjectService"]
+__all__ = ["ProfileService", "ProjectService"]

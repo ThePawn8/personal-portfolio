@@ -16,7 +16,7 @@
 |---|---|
 | **Last updated** | 2026-08-26 |
 | **Phase** | Waves 1–2 complete; Wave 3 in progress |
-| **Next ticket** | T-104 · Profile API |
+| **Next ticket** | T-105 · Contact API, then T-204/T-207 pages |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -120,7 +120,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 ### Wave 5
 | ID | Ticket | Status | PR | Notes |
 |---|---|---|---|---|
-| T-104 | Profile API | ⬜ | — | |
+| T-104 | Profile API | ✅ | [#16](https://github.com/ThePawn8/personal-portfolio/pull/16) | Serving the real CV data; experience newest-first |
 | T-106 | Email notification via Resend | ⬜ | — | Needs a Resend account + API key |
 | T-204 | Home page | ⬜ | — | |
 | T-205 | Projects index | ⬜ | — | |
@@ -203,7 +203,7 @@ Recorded so a regression is visible rather than guessed at. Update when they mov
 | E2E suite | 4 tests, 5.8 s, chromium + mobile | T-002 |
 | API unit coverage | 100 % statements, 5 tests in 0.1 s | T-003 |
 | API `/healthz` latency, local | 3.7 ms | T-003 |
-| API tests | 83 tests, 95.8 % coverage, real MongoDB | T-107 |
+| API tests | 100 tests, 96.1 % coverage, real MongoDB | T-104 |
 | Web bundle after design system | **26.45 kB gzip** JS, **4.86 kB gzip** CSS | T-201 |
 | Web unit tests | 34 tests, 100 % statements | T-201 |
 | Contrast checks | 28 pairings, both themes, all passing | T-201 |

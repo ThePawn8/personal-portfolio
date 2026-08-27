@@ -5,6 +5,7 @@ driver, which is what keeps the query surface small enough to review and lets a 
 tested without a database when that is useful.
 """
 
+from portfolio_api.repositories.profile import ProfileRepository
 from portfolio_api.repositories.projects import ProjectRepository
 
-__all__ = ["ProjectRepository"]
+__all__ = ["ProfileRepository", "ProjectRepository"]
