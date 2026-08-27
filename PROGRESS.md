@@ -16,7 +16,7 @@
 |---|---|
 | **Last updated** | 2026-08-26 |
 | **Phase** | Waves 1–2 complete; Wave 3 in progress |
-| **Next ticket** | T-103 · Projects API, then T-107 · Content seed |
+| **Next ticket** | T-107 · Content seed command |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -110,7 +110,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 ### Wave 4
 | ID | Ticket | Status | PR | Notes |
 |---|---|---|---|---|
-| T-103 | Projects API | ⬜ | — | |
+| T-103 | Projects API | ✅ | [#13](https://github.com/ThePawn8/personal-portfolio/pull/13) | List + detail, ETag/304, camelCase wire format |
 | T-105 | Contact API | ⬜ | — | |
 | T-107 | Content seed command | ⬜ | — | |
 | T-203 | Typed API client and data composables | ✅ | [#11](https://github.com/ThePawn8/personal-portfolio/pull/11) | Typed client, one loading state machine, snapshot fallback |
