@@ -17,7 +17,7 @@ from portfolio_api.core.errors import (
     RateLimitExceededError,
 )
 
-PROBLEM_FIELDS = {"type", "title", "status", "detail", "instance", "request_id"}
+PROBLEM_FIELDS = {"type", "title", "status", "detail", "instance", "requestId"}
 
 
 class _Payload(BaseModel):
@@ -121,8 +121,8 @@ async def test_every_error_carries_a_correlatable_request_id(failing_client: Asy
     for path in ("/does-not-exist", "/test/domain-error", "/test/boom"):
         response = await failing_client.get(path)
 
-        assert response.json()["request_id"], f"missing request_id in body for {path}"
-        assert response.headers["x-request-id"] == response.json()["request_id"], path
+        assert response.json()["requestId"], f"missing requestId in body for {path}"
+        assert response.headers["x-request-id"] == response.json()["requestId"], path
 
 
 async def test_cors_headers_are_present_on_error_responses(client: AsyncClient) -> None:

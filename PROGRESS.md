@@ -16,7 +16,7 @@
 |---|---|
 | **Last updated** | 2026-08-26 |
 | **Phase** | Waves 1–2 complete; Wave 3 in progress |
-| **Next ticket** | T-203 · Typed API client and data composables |
+| **Next ticket** | T-204 · Home page (backend chain blocked on Docker — see § 5, V1) |
 | **Web URL** | not deployed yet |
 | **API URL** | not deployed yet |
 | **GitHub** | [ThePawn8/personal-portfolio](https://github.com/ThePawn8/personal-portfolio) — public |
@@ -65,6 +65,7 @@ Do not relitigate these without writing an ADR. Full reasoning in
 | Backend | FastAPI, async, Beanie ODM |
 | Database | MongoDB 7, self-hosted on Fly.io, private network |
 | Content | Markdown + YAML in git, idempotent seed into Mongo |
+| Wire format | camelCase JSON, including the problem+json `requestId` — the API maps from its snake_case documents |
 | Contact | Persist to Mongo + notify via Resend, rate-limited, honeypot |
 | Hosting | Vercel (web) + Fly.io (API + Mongo) |
 | Domain | `*.vercel.app` for now; custom domain deferred to T-406 |
@@ -112,7 +113,7 @@ Legend: ⬜ todo · 🟨 in progress · ✅ done · ⛔ blocked · ⏭️ deferr
 | T-103 | Projects API | ⬜ | — | |
 | T-105 | Contact API | ⬜ | — | |
 | T-107 | Content seed command | ⬜ | — | |
-| T-203 | Typed API client and data composables | ⬜ | — | |
+| T-203 | Typed API client and data composables | ✅ | [#11](https://github.com/ThePawn8/personal-portfolio/pull/11) | Typed client, one loading state machine, snapshot fallback |
 | T-401 | API container image | ⬜ | — | |
 | T-402 | MongoDB on Fly.io | ⬜ | — | Needs a Fly.io account |
 
@@ -208,6 +209,7 @@ Recorded so a regression is visible rather than guessed at. Update when they mov
 | CI wall time | ~1 min (6 jobs in parallel) | T-004 |
 | Web bundle with router + shell | **42.80 kB gzip** JS, 5 lazy route chunks | T-202 |
 | Web tests | 71 unit (98 % statements), 21 e2e | T-202 |
+| Web tests after the API client | 99 unit (96 % statements), 21 e2e | T-203 |
 
 ---
 
@@ -249,8 +251,25 @@ Newest first. One entry per working session: what shipped, what was learned, wha
   navigation, footer, three-state theme control, 404 view, skip link, and recovery from
   stale chunks after a deploy
 
+- **T-203 merged** — typed API client with one error type, one loading state machine for
+  every remote resource, and the build-time snapshot fallback. The wire format was fixed
+  as camelCase and the API's problem payload aligned in the same PR (ADR-0001: contract
+  and consumer land together)
+
 **Waves 1 and 2 are complete except T-302** (profile content, needs the author's full name
 and LinkedIn URL).
+
+**T-203 gotchas**
+- Vue's `readonly()` returns `DeepReadonly<T>`, which fights every consumer of a generic
+  payload. The composable returns `data` and `error` unwrapped and relies on the declared
+  interface for read-only intent. ESLint's `no-unnecessary-type-assertion` and `vue-tsc`
+  disagreed on the cast that papered over this — the simplification satisfies both.
+- `instanceof Error` is unreliable across realms under jsdom: a `DOMException` created in
+  application code failed the check inside a test. Compare by `name` instead.
+- A `Response` body can only be read once, so `mockResolvedValue(new Response(...))` breaks
+  the second call. Use `mockImplementation` to build a fresh one each time.
+- The client adds nothing to the bundle yet (42.80 kB gzip, unchanged) because no view
+  imports it — it is tree-shaken until T-204 uses it.
 
 **T-202 gotchas**
 - **Binding `:href="undefined"` alongside `:to` breaks RouterLink.** The undefined

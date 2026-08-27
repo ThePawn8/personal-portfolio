@@ -11,11 +11,11 @@ The `type` field of each response links to the section below.
   "status": 422,
   "detail": "email: value is not a valid email address",
   "instance": "/api/v1/contact",
-  "request_id": "01JC4Z8K7Q3M9XKQ0F8W2E5T1V"
+  "requestId": "01JC4Z8K7Q3M9XKQ0F8W2E5T1V"
 }
 ```
 
-`request_id` is also returned in the `X-Request-ID` header and matches the server log line
+`requestId` is also returned in the `X-Request-ID` header and matches the server log line
 for that request. Quote it in any bug report — it is the fastest way to find what happened.
 
 ---
@@ -91,6 +91,6 @@ so that adding one cannot invent a new error shape.
 
 The response deliberately contains no internals: a stack trace in a response body is an
 information leak and is useless to the caller. The full traceback is logged against the
-same `request_id` shown in the response.
+same `requestId` shown in the response.
 
-**Fix:** report it with the `request_id`.
+**Fix:** report it with the `requestId`.

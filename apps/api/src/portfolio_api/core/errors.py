@@ -93,7 +93,7 @@ def build_problem(
         "status": status_code,
         "detail": detail,
         "instance": request.url.path,
-        "request_id": request_id,
+        "requestId": request_id,
     }
 
     # Unhandled exceptions are turned into responses by the outermost middleware, which sits
@@ -188,7 +188,7 @@ async def handle_unexpected_error(request: Request, exc: Exception) -> JSONRespo
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         slug="internal-error",
         title="Internal server error",
-        detail="The request could not be completed. Quote the request_id when reporting this.",
+        detail="The request could not be completed. Quote the requestId when reporting this.",
     )
 
 
