@@ -43,6 +43,6 @@ async def test_openapi_documents_the_error_contract(client: AsyncClient) -> None
     assert "Problem" in schema["components"]["schemas"]
 
     problem_properties = schema["components"]["schemas"]["Problem"]["properties"]
-    assert {"type", "title", "status", "detail", "instance", "request_id"} <= (
+    assert {"type", "title", "status", "detail", "instance", "requestId"} <= (
         problem_properties.keys()
     )
